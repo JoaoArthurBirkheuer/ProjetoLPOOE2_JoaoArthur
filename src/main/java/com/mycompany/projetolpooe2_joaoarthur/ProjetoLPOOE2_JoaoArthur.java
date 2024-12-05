@@ -5,6 +5,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.Scanner;
 
 public class ProjetoLPOOE2_JoaoArthur {
 
@@ -84,6 +85,37 @@ public class ProjetoLPOOE2_JoaoArthur {
             System.out.println("Usuário com ID 2 removido com sucesso.");
             }
             
+            Avaliacao avaliacao1 = new Avaliacao();
+            Avaliacao avaliacao2 = new Avaliacao();
+            Avaliacao avaliacao3 = new Avaliacao();
+            
+            avaliacao1.setUsuario(usuario1);
+            avaliacao1.setLivro(livro3);
+            avaliacao1.setNota((float) 9.5);
+            avaliacao1.setDescricao("Gostei muito do livro");
+            
+            avaliacao2.setFuncionario(funcionario1);
+            avaliacao2.setLivro(livro3);
+            avaliacao2.setNota((float) 0.5);
+            avaliacao2.setDescricao("Detestei o livro");
+            
+            avaliacao3.setFuncionario(funcionario2);
+            avaliacao3.setLivro(livro2);
+            avaliacao3.setNota((float) 7.5);
+            avaliacao3.setDescricao("Gostei do livro");
+            
+            em.persist(avaliacao1);
+            em.persist(avaliacao2);
+            em.persist(avaliacao3);
+            
+            Avaliacao avaliacao2Remover = em.find(Avaliacao.class, 2); // Considerando que a ID da Avaliação 2 é 2
+            if (avaliacao2Remover == null) {
+            System.out.println("Avaliação com ID 2 não existe.");
+            } else {
+            em.remove(avaliacao2Remover);
+            System.out.println("Avaliação com ID 2 removida com sucesso.");
+}
+            
             em.getTransaction().commit();
 
             System.out.println("Registros de teste adicionados com sucesso!");
@@ -93,7 +125,7 @@ public class ProjetoLPOOE2_JoaoArthur {
                 System.out.println("Problema na transação, revertendo...");
                 em.getTransaction().rollback();
             }
-            // e.printStackTrace();
+            e.printStackTrace();
         } finally {
             em.close();
             emf.close();
