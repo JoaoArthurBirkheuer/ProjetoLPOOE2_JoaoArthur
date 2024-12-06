@@ -9,9 +9,12 @@ package com.mycompany.projetolpooe2_joaoarthur.dao;
  * @author vanessalagomachado
  */
 public interface InterfaceBD {
-    public Boolean conexaoAberta();
-    public void fecharConexao();
-    public Object find(Class c, Object id) throws Exception;
-    public void persist(Object o) throws Exception;
-    public void remover(Object o) throws Exception;
+    Boolean conexaoAberta();
+    void fecharConexao();
+    Object find(Class c, Object id) throws Exception;
+    void persist(Object o) throws Exception;
+    void remover(Object o) throws Exception;
+    void deleteLivroById(int idLivro) throws Exception;
+    void deleteFuncionarioById(long idFuncionario) throws Exception;
+    void deleteUsuarioById(int idUsuario) throws Exception;
 }

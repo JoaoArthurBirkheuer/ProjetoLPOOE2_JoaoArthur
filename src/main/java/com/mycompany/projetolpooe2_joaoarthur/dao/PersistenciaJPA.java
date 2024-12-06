@@ -32,7 +32,7 @@ public class PersistenciaJPA implements InterfaceBD {
     public PersistenciaJPA() {
         //parametro: é o nome da unidade de persistencia (Persistence Unit)
         factory
-                = Persistence.createEntityManagerFactory("pu_lpoo_estacionamento");
+                = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
         //conecta no bd e executa a estratégia de geração.
         entity = factory.createEntityManager();
     }
@@ -91,6 +91,143 @@ public class PersistenciaJPA implements InterfaceBD {
             }
         }
     }
+
+        public void deleteLivroById(int idLivro) throws Exception {
+        entity = getEntityManager(); // Garantir que o EntityManager está disponível
+        try {
+        entity.getTransaction().begin();
+
+        // Buscar o livro pelo ID
+        Livro livro = entity.find(Livro.class, idLivro);
+        if (livro == null) {
+            System.out.println("Livro com ID " + idLivro + " não encontrado.");
+            return;
+        }
+
+        // Deletar as avaliações associadas ao livro
+        TypedQuery<Avaliacao> queryAvaliacoes = entity.createQuery(
+            "SELECT a FROM Avaliacao a WHERE a.livro.idLivro = :idLivro", Avaliacao.class);
+        queryAvaliacoes.setParameter("idLivro", idLivro);
+        List<Avaliacao> avaliacoes = queryAvaliacoes.getResultList();
+        for (Avaliacao avaliacao : avaliacoes) {
+            entity.remove(avaliacao);
+        }
+
+        // Atualizar os empréstimos relacionados ao livro
+        TypedQuery<Emprestimo> queryEmprestimos = entity.createQuery(
+            "SELECT e FROM Emprestimo e JOIN e.livrosEmprestados l WHERE l.idLivro = :idLivro", Emprestimo.class);
+        queryEmprestimos.setParameter("idLivro", idLivro);
+        List<Emprestimo> emprestimos = queryEmprestimos.getResultList();
+        for (Emprestimo emprestimo : emprestimos) {
+            emprestimo.getLivrosEmprestados().remove(livro); // Remover a relação
+            entity.merge(emprestimo); // Atualizar o estado
+        }
+
+        // Deletar o livro
+        entity.remove(livro);
+
+        entity.getTransaction().commit();
+        System.out.println("Livro com ID " + idLivro + " e seus registros relacionados foram deletados.");
+    } catch (Exception e) {
+        if (entity.getTransaction().isActive()) {
+            entity.getTransaction().rollback();
+        }
+        System.err.println("Erro ao deletar o livro com ID " + idLivro + ": " + e.getMessage());
+        e.printStackTrace();
+        throw e; // Relançar a exceção
+    }
+    }
+        
+        public void deleteFuncionarioById(long idFuncionario) throws Exception {
+    entity = getEntityManager();
+    try {
+        entity.getTransaction().begin();
+
+        // Buscar o funcionário pelo ID
+        Funcionario funcionario = entity.find(Funcionario.class, idFuncionario);
+        if (funcionario == null) {
+            System.out.println("Funcionário com ID " + idFuncionario + " não encontrado.");
+            return;
+        }
+
+        // Deletar avaliações associadas ao funcionário
+        TypedQuery<Avaliacao> queryAvaliacoes = entity.createQuery(
+            "SELECT a FROM Avaliacao a WHERE a.funcionario.id = :idFuncionario", Avaliacao.class);
+        queryAvaliacoes.setParameter("idFuncionario", idFuncionario);
+        List<Avaliacao> avaliacoes = queryAvaliacoes.getResultList();
+        for (Avaliacao avaliacao : avaliacoes) {
+            entity.remove(avaliacao);
+        }
+
+        // Deletar empréstimos associados ao funcionário
+        TypedQuery<Emprestimo> queryEmprestimos = entity.createQuery(
+            "SELECT e FROM Emprestimo e WHERE e.funcionario.id = :idFuncionario", Emprestimo.class);
+        queryEmprestimos.setParameter("idFuncionario", idFuncionario);
+        List<Emprestimo> emprestimos = queryEmprestimos.getResultList();
+        for (Emprestimo emprestimo : emprestimos) {
+            entity.remove(emprestimo);
+        }
+
+        // Deletar o funcionário
+        entity.remove(funcionario);
+
+        entity.getTransaction().commit();
+        System.out.println("Funcionário com ID " + idFuncionario + " e seus registros relacionados foram deletados.");
+    } catch (Exception e) {
+        if (entity.getTransaction().isActive()) {
+            entity.getTransaction().rollback();
+        }
+        System.err.println("Erro ao deletar funcionário com ID " + idFuncionario + ": " + e.getMessage());
+        e.printStackTrace();
+        throw e;
+    }
+}
+
+        public void deleteUsuarioById(int idUsuario) throws Exception {
+    entity = getEntityManager();
+    try {
+        entity.getTransaction().begin();
+
+        // Buscar o usuário pelo ID
+        Usuario usuario = entity.find(Usuario.class, idUsuario);
+        if (usuario == null) {
+            System.out.println("Usuário com ID " + idUsuario + " não encontrado.");
+            return;
+        }
+
+        // Deletar avaliações associadas ao usuário
+        TypedQuery<Avaliacao> queryAvaliacoes = entity.createQuery(
+            "SELECT a FROM Avaliacao a WHERE a.usuario.id = :idUsuario", Avaliacao.class);
+        queryAvaliacoes.setParameter("idUsuario", idUsuario);
+        List<Avaliacao> avaliacoes = queryAvaliacoes.getResultList();
+        for (Avaliacao avaliacao : avaliacoes) {
+            entity.remove(avaliacao);
+        }
+
+        // Deletar empréstimos associados ao usuário
+        TypedQuery<Emprestimo> queryEmprestimos = entity.createQuery(
+            "SELECT e FROM Emprestimo e WHERE e.usuario.id = :idUsuario", Emprestimo.class);
+        queryEmprestimos.setParameter("idUsuario", idUsuario);
+        List<Emprestimo> emprestimos = queryEmprestimos.getResultList();
+        for (Emprestimo emprestimo : emprestimos) {
+            entity.remove(emprestimo);
+        }
+
+        // Deletar o usuário
+        entity.remove(usuario);
+
+        entity.getTransaction().commit();
+        System.out.println("Usuário com ID " + idUsuario + " e seus registros relacionados foram deletados.");
+    } catch (Exception e) {
+        if (entity.getTransaction().isActive()) {
+            entity.getTransaction().rollback();
+        }
+        System.err.println("Erro ao deletar usuário com ID " + idUsuario + ": " + e.getMessage());
+        e.printStackTrace();
+        throw e;
+    }
+}
+
 
     /*
     Todos os métodos agora chamam getEntityManager() 

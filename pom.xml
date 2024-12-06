@@ -5,11 +5,18 @@
     <artifactId>ProjetoLPOOE2_JoaoArthur</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
+    <repositories>
+        <repository>
+            <id>unknown-jars-temp-repo</id>
+            <name>A temporary repository created by NetBeans for libraries and jars it could not identify. Please replace the dependencies in this repository with correct ones and delete this repository.</name>
+            <url>file:${project.basedir}/lib</url>
+        </repository>
+    </repositories>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <exec.mainClass>com.mycompany.projetolpooe2_joaoarthur.ProjetoLPOOE1_JoaoArthur</exec.mainClass>
+        <exec.mainClass>com.mycompany.projetolpooe2_joaoarthur.ProjetoLPOOE2_JoaoArthur</exec.mainClass>
     </properties>
     <dependencies>
         <dependency>
@@ -94,6 +101,11 @@
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>2.7.12</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>unknown.binary</groupId>
+            <artifactId>AbsoluteLayout</artifactId>
+            <version>SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>
