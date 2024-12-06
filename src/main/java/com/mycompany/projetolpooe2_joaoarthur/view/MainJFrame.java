@@ -131,7 +131,10 @@ public class MainJFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+    TelaUsuarios telaPessoas = new TelaUsuarios();
+    telaPessoas.setVisible(true);
+    telaPessoas.setLocationRelativeTo(this);
+// TODO add your handling code here:
         // usuários
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 

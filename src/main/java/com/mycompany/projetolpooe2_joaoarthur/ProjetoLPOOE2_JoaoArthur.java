@@ -19,18 +19,18 @@ public class ProjetoLPOOE2_JoaoArthur {
             em.getTransaction().begin();
 
             // Adicionar Usuários
-            Usuario usuario1 = new Usuario("Nome 1", "12345678900", "usuario1@example.com");
+            Usuario usuario1 = new Usuario("Nome 1", "123.456.789-00", "usuario1@example.com");
             em.persist(usuario1);
 
-            Usuario usuario2 = new Usuario("Nome 2", "98765432100", "usuario2@example.com");
+            Usuario usuario2 = new Usuario("Nome 2", "987.654.321-00", "usuario2@example.com");
             em.persist(usuario2);
 
             // Adicionar Funcionários
-            Funcionario funcionario1 = new Funcionario("Funcionario 1", "11122233300", "funcionario1@example.com");
+            Funcionario funcionario1 = new Funcionario("Funcionario 1", "111.222.333-00", "funcionario1@example.com");
             funcionario1.setCargo("Bibliotecário");
             em.persist(funcionario1);
 
-            Funcionario funcionario2 = new Funcionario("Funcionario 2", "44455566600", "funcionario2@example.com");
+            Funcionario funcionario2 = new Funcionario("Funcionario 2", "444.555.666-00", "funcionario2@example.com");
             funcionario2.setCargo("Auxiliar");
             em.persist(funcionario2);
 

@@ -13,4 +13,8 @@ public class Usuario extends Pessoa {
     public Usuario() {
         super();
     }
+
+    public void setId(long idParaCadastrar) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
