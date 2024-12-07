@@ -25,16 +25,55 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author Usuario
  */
-public class TelaFuncionarios extends javax.swing.JFrame {
+public class TelaLivros extends javax.swing.JFrame {
 
     /**
-     * Creates new form TelaFuncionarios
+     * Creates new form TelaLivros
      */
-    public TelaFuncionarios() {
+    public TelaLivros() {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         PersistenciaJPA jpa = new PersistenciaJPA();
     }
+    
+    private void realizarPesquisa(){
+    try {
+    String pesquisa = jTextField1.getText().trim();
+
+    // Carregar o driver PostgreSQL
+    Class.forName("org.postgresql.Driver");
+
+    // Conectar ao banco
+    Connection con = DriverManager.getConnection(
+        "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
+        "postgres", 
+        "jb12"
+    );
+
+    Statement st = con.createStatement();
+    String sql = "SELECT idLivro, titulo, autor FROM tb_livro WHERE idLivro::text ILIKE '%" + pesquisa + "%' OR titulo ILIKE '%" + pesquisa + "%' OR autor ILIKE '%" + pesquisa + "%'";
+    ResultSet rs = st.executeQuery(sql);
+
+    DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
+    tblModel.setRowCount(0);
+
+    while (rs.next()) {
+        String id = String.valueOf(rs.getLong("idLivro"));
+        String titulo = rs.getString("titulo");
+        String autor = rs.getString("autor");
+
+        String tbData[] = {id, titulo, autor};
+        tblModel.addRow(tbData);
+    }
+
+    rs.close();
+    st.close();
+    con.close();
+} catch (ClassNotFoundException | SQLException ex) {
+    JOptionPane.showMessageDialog(this, "Erro na pesquisa: " + ex.getMessage());
+}
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -59,33 +98,33 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Controle e Pesquisa de Funcionários");
-        jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
+        jLabel1.setText("Controle e Pesquisa de Livros");
+        jLabel1.setBorder(new javax.swing.border.MatteBorder(null));
 
-        jLabel2.setText("Pesquisar:");
+        jLabel2.setText("Pesquisa:");
 
-        jButton1.setText("Mostrar dados");
+        jButton1.setText("Novo livro");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Novo registro");
+        jButton2.setText("Mostrar dados");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Deletar Selecionado");
+        jButton3.setText("Editar selecionado");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
-        jButton4.setText("Editar Selecionado");
+        jButton4.setText("Deletar selecionado");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton4ActionPerformed(evt);
@@ -94,17 +133,17 @@ public class TelaFuncionarios extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
             },
             new String [] {
-                "ID", "Nome", "CPF", "Email", "Cargo"
+                "ID", "Título", "Autor"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Long.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -135,54 +174,57 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(88, 88, 88)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextField1)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jButton1)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton2)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton4)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButton3)))
-                .addContainerGap(73, Short.MAX_VALUE))
+                .addGap(133, 133, 133)
+                .addComponent(jLabel1)
+                .addGap(133, 133, 133))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1)
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jLabel2))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jTextField1)
+                        .addGap(133, 133, 133))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(12, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(16, 16, 16)
+                .addGap(17, 17, 17)
                 .addComponent(jLabel1)
-                .addGap(38, 38, 38)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 255, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
-                    .addComponent(jButton2)
-                    .addComponent(jButton4)
-                    .addComponent(jButton3))
-                .addGap(19, 19, 19))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton2)
+                        .addGap(26, 26, 26)
+                        .addComponent(jButton1)
+                        .addGap(26, 26, 26)
+                        .addComponent(jButton3)
+                        .addGap(30, 30, 30)
+                        .addComponent(jButton4))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 362, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       try {
-        // Carregar o driver PostgreSQL
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        
+// TODO add your handling code here:
+        // mostrar dados
+        try{
         Class.forName("org.postgresql.Driver");
 
         // Conectar ao banco
@@ -194,7 +236,7 @@ public class TelaFuncionarios extends javax.swing.JFrame {
 
         // Criar Statement
         Statement st = con.createStatement();
-        String sql = "SELECT idPessoa, nome, cpf, email, cargo FROM tb_funcionario";
+        String sql = "SELECT idlivro, titulo, autor FROM tb_livro";
         ResultSet rs = st.executeQuery(sql);
 
         // Obter o modelo da tabela
@@ -203,13 +245,11 @@ public class TelaFuncionarios extends javax.swing.JFrame {
 
         // Popular a tabela
         while (rs.next()) {
-            String id = String.valueOf(rs.getLong("idPessoa"));
-            String nome = rs.getString("nome");
-            String cpf = rs.getString("cpf");
-            String email = rs.getString("email");
-            String cargo = rs.getString("cargo");
+            String id = String.valueOf(rs.getInt("idlivro"));
+            String titulo = rs.getString("titulo");
+            String autor = rs.getString("autor");
 
-            String tbData[] = {id, nome, cpf, email,cargo};
+            String tbData[] = {id, titulo, autor};
             tblModel.addRow(tbData);
         }
 
@@ -224,48 +264,69 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         JOptionPane.showMessageDialog(this, "Erro ao buscar dados: " + ex.getMessage());
     }
-             
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_jButton2ActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
         // novo registro
-        TelaCadastroFuncionario tcf = new TelaCadastroFuncionario();
-        tcf.setVisible(true);
-        tcf.setLocationRelativeTo(this);
-    }//GEN-LAST:event_jButton2ActionPerformed
+        TelaCadastroLivro tcl = new TelaCadastroLivro();
+        tcl.setVisible(true);
+        tcl.setLocationRelativeTo(this);
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        // deletar
-        int selectedRow = jTable1.getSelectedRow();
+        // editar
+        int linhaSelecionada = jTable1.getSelectedRow();
+
+    if (linhaSelecionada == -1) {
+    JOptionPane.showMessageDialog(this, "Por favor, selecione um livro na tabela.");
+    return;
+    }
+
+    try {
+        
+        Integer idLivro = Integer.valueOf(jTable1.getValueAt(linhaSelecionada, 0).toString().trim());
+
+        // Passar o ID para a tela de edição
+        EdicaoCadastroLivro telaEdicao = new EdicaoCadastroLivro(this, idLivro); // Passa o ID correto
+        telaEdicao.setVisible(true);
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Erro ao processar o ID do usuário.");
+    }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+
+    // Verificar se uma linha foi selecionada
+    int selectedRow = jTable1.getSelectedRow();
     if (selectedRow == -1) {
-        JOptionPane.showMessageDialog(this, "Selecione uma linha para excluir!");
+        JOptionPane.showMessageDialog(this, "Selecione um livro para excluir!");
         return;
     }
-    
+
     // Verificar se a coluna ID na linha selecionada está vazia
-        String id = (String) jTable1.getValueAt(selectedRow, 0);
-        if (id == null || id.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Não é possível excluir registros vazios. Certifique-se de que os dados foram carregados corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    String id = (String) jTable1.getValueAt(selectedRow, 0);
+    if (id == null || id.trim().isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Não é possível excluir registros vazios. Certifique-se de que os dados foram carregados corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
     // Confirmar exclusão
     int confirm = JOptionPane.showConfirmDialog(
-        this, 
-        "Tem certeza que deseja excluir este registro?", 
-        "Confirmação", 
-        JOptionPane.YES_NO_OPTION
+            this,
+            "Tem certeza que deseja excluir este livro e seus vínculos com empréstimos?",
+            "Confirmação",
+            JOptionPane.YES_NO_OPTION
     );
 
     if (confirm != JOptionPane.YES_OPTION) {
         return; // Usuário cancelou
     }
 
-    // Obter ID do usuário a partir da tabela
+    // Obter ID do livro a partir da tabela
     DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-    Long idF = Long.parseLong(tblModel.getValueAt(selectedRow, 0).toString());
+    int idLivro = Integer.parseInt(tblModel.getValueAt(selectedRow, 0).toString());
 
     // Apagar registro no banco via JPA
     try {
@@ -273,38 +334,35 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Buscar o usuário e remover
-        Funcionario funcionario = em.find(Funcionario.class, idF);
-        if (funcionario != null) {
-            // Remover avaliações relacionadas
+        // Buscar o livro e remover
+        Livro livro = em.find(Livro.class, idLivro);
+        if (livro != null) {
+            // Remover avaliações relacionadas ao livro
             List<Avaliacao> avaliacoes = em.createQuery(
-                    "SELECT a FROM Avaliacao a WHERE a.funcionario.idPessoa = :idF", Avaliacao.class)
-                    .setParameter("idUsuario", idF)
+                    "SELECT a FROM Avaliacao a WHERE a.livro.id = :idLivro", Avaliacao.class)
+                    .setParameter("idLivro", idLivro)
                     .getResultList();
 
             for (Avaliacao avaliacao : avaliacoes) {
                 em.remove(avaliacao);
             }
 
-            // Remover empréstimos relacionados
+            // Remover o livro da associação com empréstimos na tabela `tb_emprestimo_livro`
             List<Emprestimo> emprestimos = em.createQuery(
-                    "SELECT e FROM Emprestimo e WHERE e.funcionario.idPessoa = :idF", Emprestimo.class)
-                    .setParameter("idUsuario", idF)
+                    "SELECT e FROM Emprestimo e JOIN e.livrosEmprestados l WHERE l.id = :idLivro", Emprestimo.class)
+                    .setParameter("idLivro", idLivro)
                     .getResultList();
 
             for (Emprestimo emprestimo : emprestimos) {
-                // Limpar a relação com os livros emprestados
-                Set<Livro> livrosEmprestados = emprestimo.getLivrosEmprestados();
-                if (livrosEmprestados != null) {
-                    livrosEmprestados.clear();
-                }
-                em.remove(emprestimo);
+                // Remover o livro específico da associação
+                emprestimo.getLivrosEmprestados().remove(livro);
+                em.persist(emprestimo); // Atualizar o estado do empréstimo
             }
 
-            // Remover o usuário
-            em.remove(funcionario);
+            // Remover o próprio livro
+            em.remove(livro);
 
-            System.out.println("Usuário com ID " + idF + " e seus registros relacionados foram deletados.");
+            System.out.println("Livro com ID " + idLivro + " e seus vínculos relacionados foram deletados.");
         }
 
         em.getTransaction().commit();
@@ -312,74 +370,16 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         emf.close();
 
         // Notificar exclusão e atualizar tabela
-        JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
+        JOptionPane.showMessageDialog(this, "Livro excluído com sucesso!");
         tblModel.removeRow(selectedRow); // Atualiza a tabela
     } catch (Exception ex) {
-        Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
-        JOptionPane.showMessageDialog(this, "Erro ao excluir registro: " + ex.getMessage());
-    }
-    }//GEN-LAST:event_jButton3ActionPerformed
-
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
-        // editar
-        int linhaSelecionada = jTable1.getSelectedRow();
-
-    if (linhaSelecionada == -1) {
-    JOptionPane.showMessageDialog(this, "Por favor, selecione um usuário na tabela.");
-    return;
+        Logger.getLogger(TelaLivros.class.getName()).log(Level.SEVERE, null, ex);
+        JOptionPane.showMessageDialog(this, "Erro ao excluir livro: " + ex.getMessage());
     }
 
-    try {
-        // Conversão segura para Long
-        Long idPessoa = Long.parseLong(jTable1.getValueAt(linhaSelecionada, 0).toString());
 
-        // Passar o ID para a tela de edição
-        EdicaoCadastroFuncionario telaEdicao = new EdicaoCadastroFuncionario(this, idPessoa);
-        telaEdicao.setVisible(true);
-    } catch (NumberFormatException ex) {
-        JOptionPane.showMessageDialog(this, "Erro ao processar o ID do usuário.");
-    }
     }//GEN-LAST:event_jButton4ActionPerformed
-    private void realizarPesquisa() {
-    try {
-        String pesquisa = jTextField1.getText().trim();
 
-        // Carregar o driver PostgreSQL
-        Class.forName("org.postgresql.Driver");
-
-        // Conectar ao banco
-        Connection con = DriverManager.getConnection(
-            "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
-            "postgres", 
-            "jb12"
-        );
-
-        Statement st = con.createStatement();
-        String sql = "SELECT idPessoa, nome, cpf, email, cargo FROM tb_funcionario WHERE nome ILIKE '%" + pesquisa + "%' OR cpf ILIKE '%" + pesquisa + "%' OR email ILIKE '%" + pesquisa + "%' OR cargo ILIKE '%" + pesquisa + "%'";
-        ResultSet rs = st.executeQuery(sql);
-
-        DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-        tblModel.setRowCount(0);
-
-        while (rs.next()) {
-            String id = String.valueOf(rs.getLong("idPessoa"));
-            String nome = rs.getString("nome");
-            String cpf = rs.getString("cpf");
-            String email = rs.getString("email");
-            String cargo = rs.getString("cargo");
-
-            String tbData[] = {id, nome, cpf, email, cargo};
-            tblModel.addRow(tbData);
-        }
-
-        rs.close();
-        st.close();
-        con.close();
-    } catch (ClassNotFoundException | SQLException ex) {
-        JOptionPane.showMessageDialog(this, "Erro na pesquisa: " + ex.getMessage());
-    }
-}
     /**
      * @param args the command line arguments
      */
@@ -397,20 +397,20 @@ public class TelaFuncionarios extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(TelaFuncionarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaLivros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(TelaFuncionarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaLivros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(TelaFuncionarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaLivros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(TelaFuncionarios.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(TelaLivros.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new TelaFuncionarios().setVisible(true);
+                new TelaLivros().setVisible(true);
             }
         });
     }

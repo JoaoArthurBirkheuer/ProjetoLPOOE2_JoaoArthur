@@ -25,6 +25,7 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         this.idPessoa = idPessoa;
         initComponents();
         carregarDadosUsuario();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
     private void carregarDadosUsuario() {
@@ -234,7 +235,7 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         usuario.setNome(jTextField1.getText().trim());
         usuario.setCpf(jTextField2.getText().trim());
         usuario.setEmail(jTextField3.getText().trim());
-        em.merge(usuario); // Salva as mudanças
+        em.persist(usuario); // Salva as mudanças
         em.getTransaction().commit();
         em.close();
 

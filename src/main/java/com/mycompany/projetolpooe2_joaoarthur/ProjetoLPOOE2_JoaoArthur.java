@@ -66,7 +66,7 @@ public class ProjetoLPOOE2_JoaoArthur {
             em.persist(emprestimo2);
 
             // Remoção de Funcionário e seus Relacionamentos
-            Long idFuncionario = 4L;
+            /*Long idFuncionario = 4L;
             Funcionario funcionario = em.find(Funcionario.class, idFuncionario);
 
             if (funcionario != null) {
@@ -99,7 +99,7 @@ public class ProjetoLPOOE2_JoaoArthur {
                 System.out.println("Funcionário com ID " + idFuncionario + " e seus registros relacionados foram deletados.");
             } else {
                 System.out.println("Funcionário com ID " + idFuncionario + " não encontrado.");
-            }
+            }*/
 
             em.getTransaction().commit();
             System.out.println("Registros de teste adicionados com sucesso!");

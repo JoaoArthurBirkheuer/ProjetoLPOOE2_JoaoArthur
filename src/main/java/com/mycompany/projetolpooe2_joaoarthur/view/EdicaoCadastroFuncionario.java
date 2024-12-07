@@ -25,11 +25,13 @@ public class EdicaoCadastroFuncionario extends javax.swing.JFrame {
      */
     private Long idPessoa;
     private JFrame parent;
+    
     public EdicaoCadastroFuncionario(JFrame parent, Long idPessoa) {
         this.parent = parent;
         this.idPessoa = idPessoa;
         initComponents();
         carregarDadosFuncionario();
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     }
     
     private void carregarDadosFuncionario() {
