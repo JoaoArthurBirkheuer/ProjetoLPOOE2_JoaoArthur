@@ -21,7 +21,7 @@ public abstract class Pessoa implements Serializable {
     private String email;
 
     @Column
-    private final boolean ehFuncionario;
+    private boolean ehFuncionario;
 
     public Pessoa(String nome, String cpf, String email, boolean ehFuncionario) {
         this.nome = nome;
@@ -65,5 +65,9 @@ public abstract class Pessoa implements Serializable {
 
     public boolean isEhFuncionario() {
         return ehFuncionario;
+    }
+    
+    public void setEhFuncionario(boolean ehFuncionario){
+        this.ehFuncionario = ehFuncionario;
     }
 }

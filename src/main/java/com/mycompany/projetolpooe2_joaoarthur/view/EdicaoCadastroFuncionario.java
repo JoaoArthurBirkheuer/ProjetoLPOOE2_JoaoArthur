@@ -3,40 +3,46 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.projetolpooe2_joaoarthur.view;
-import javax.persistence.*;
-import com.mycompany.projetolpooe2_joaoarthur.dao.*;
+
+import com.mycompany.projetolpooe2_joaoarthur.model.Funcionario;
 import com.mycompany.projetolpooe2_joaoarthur.model.Usuario;
-import javax.swing.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
+import javax.persistence.TypedQuery;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 /**
  *
  * @author Usuario
  */
-public class EdicaoCadastroUsuario extends javax.swing.JFrame {
+public class EdicaoCadastroFuncionario extends javax.swing.JFrame {
 
     /**
-     * Creates new form EdicaoCadastroUsuario
+     * Creates new form EdicaoCadastroFuncionario
      */
     private Long idPessoa;
     private JFrame parent;
-
-    public EdicaoCadastroUsuario(JFrame parent, Long idPessoa) {
+    public EdicaoCadastroFuncionario(JFrame parent, Long idPessoa) {
         this.parent = parent;
         this.idPessoa = idPessoa;
         initComponents();
-        carregarDadosUsuario();
+        carregarDadosFuncionario();
     }
     
-    private void carregarDadosUsuario() {
+    private void carregarDadosFuncionario() {
         EntityManager em = null;
         try {
             em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
-            Usuario usuario = em.find(Usuario.class, idPessoa);
+            Funcionario funcionario = em.find(Funcionario.class, idPessoa);
 
-            if (usuario != null) {
-                jTextField1.setText(usuario.getNome());
-                jTextField2.setText(usuario.getCpf());
-                jTextField3.setText(usuario.getEmail());
+            if (funcionario != null) {
+                jTextField1.setText(funcionario.getNome());
+                jTextField2.setText(funcionario.getCpf());
+                jTextField3.setText(funcionario.getEmail());
+                jTextField4.setText(funcionario.getCargo());
             } else {
                 JOptionPane.showMessageDialog(this, "Usuário não encontrado.");
                 dispose();
@@ -57,12 +63,13 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
             transaction = em.getTransaction();
             transaction.begin();
 
-            Usuario usuario = em.find(Usuario.class, idPessoa);
-            if (usuario != null) {
-                usuario.setNome(jTextField1.getText());
-                usuario.setCpf(jTextField2.getText());
-                usuario.setEmail(jTextField3.getText());
-                em.merge(usuario);
+            Funcionario f = em.find(Funcionario.class, idPessoa);
+            if (f != null) {
+                f.setNome(jTextField1.getText());
+                f.setCpf(jTextField2.getText());
+                f.setEmail(jTextField3.getText());
+                f.setCargo(jTextField4.getText());
+                em.persist(f);
                 transaction.commit();
                 JOptionPane.showMessageDialog(this, "Dados atualizados com sucesso!");
             } else {
@@ -89,16 +96,18 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
+        jTextField4 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Edição de Registro de Usuário");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 22)); // NOI18N
+        jLabel1.setText("Edição de Registro de Funcionário");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
         jLabel2.setText("Nome:");
@@ -107,11 +116,7 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
 
         jLabel4.setText("Email:");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
-            }
-        });
+        jLabel5.setText("Cargo:");
 
         jButton1.setText("Realizar Alterações");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
@@ -132,8 +137,12 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(19, 19, 19)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jTextField4))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -147,46 +156,47 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jTextField1))
                     .addComponent(jLabel1))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
-                .addGap(65, 65, 65)
+                .addGap(52, 52, 52)
                 .addComponent(jButton1)
-                .addGap(42, 42, 42))
+                .addGap(69, 69, 69))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(43, 43, 43)
+                .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel5)
+                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 37, Short.MAX_VALUE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
                     .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
         if (jTextField1.getText().trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "O campo Nome não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
@@ -201,6 +211,12 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "O campo Email não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
     }
+    
+    if(jTextField4.getText().trim().isEmpty())
+    {
+       JOptionPane.showMessageDialog(this, "O campo Cargo não pode estar vazio.", "Erro", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
 
     if (!(jTextField2.getText().trim()).matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
         JOptionPane.showMessageDialog(this, "CPF inválido. Por favor, verifique o formato.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -212,29 +228,30 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         EntityManager em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
 
         // Buscar o usuário no banco
-        Usuario usuario = em.find(Usuario.class, idPessoa);
+       Funcionario f = em.find(Funcionario.class, idPessoa);
 
-        if (usuario == null) {
+        if (f == null) {
             JOptionPane.showMessageDialog(this, "Usuário não encontrado no banco de dados.", "Erro", JOptionPane.ERROR_MESSAGE);
             em.close();
             return;
         }
         
-        TypedQuery<Long> query = em.createQuery("SELECT COUNT(u) FROM Usuario u WHERE u.cpf = :cpf", Long.class);
+        TypedQuery<Long> query = em.createQuery("SELECT COUNT(u) FROM Funcionario u WHERE u.cpf = :cpf", Long.class);
         query.setParameter("cpf", jTextField2.getText().trim());
         Long count = query.getSingleResult();
 
-        if (count > 0 && !jTextField2.getText().trim().equals(usuario.getCpf())) {
+        if (count > 0 && !jTextField2.getText().trim().equals(f.getCpf())) {
             JOptionPane.showMessageDialog(this, "O CPF já está cadastrado!", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Atualizando os dados do usuário
         em.getTransaction().begin();
-        usuario.setNome(jTextField1.getText().trim());
-        usuario.setCpf(jTextField2.getText().trim());
-        usuario.setEmail(jTextField3.getText().trim());
-        em.merge(usuario); // Salva as mudanças
+        f.setNome(jTextField1.getText().trim());
+        f.setCpf(jTextField2.getText().trim());
+        f.setEmail(jTextField3.getText().trim());
+        f.setCargo(jTextField4.getText().trim());
+        em.persist(f); // Salva as mudanças
         em.getTransaction().commit();
         em.close();
 
@@ -269,7 +286,7 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
         }
 
         // Abrir a tela principal
-        SwingUtilities.invokeLater(() -> new TelaUsuarios().setVisible(true));
+        SwingUtilities.invokeLater(() -> new TelaFuncionarios().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -279,8 +296,10 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
+    private javax.swing.JTextField jTextField4;
     // End of variables declaration//GEN-END:variables
 }
