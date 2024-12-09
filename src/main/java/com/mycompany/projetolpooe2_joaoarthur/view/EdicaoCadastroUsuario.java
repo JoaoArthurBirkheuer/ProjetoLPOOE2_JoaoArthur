@@ -209,10 +209,8 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
     }
 
     try {
-        // Conexão com o banco
         EntityManager em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
 
-        // Buscar o usuário no banco
         Usuario usuario = em.find(Usuario.class, idPessoa);
 
         if (usuario == null) {
@@ -230,12 +228,11 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
             return;
         }
 
-        // Atualizando os dados do usuário
         em.getTransaction().begin();
         usuario.setNome(jTextField1.getText().trim());
         usuario.setCpf(jTextField2.getText().trim());
         usuario.setEmail(jTextField3.getText().trim());
-        em.persist(usuario); // Salva as mudanças
+        em.persist(usuario);
         em.getTransaction().commit();
         em.close();
 
@@ -257,7 +254,6 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // Configurar o look and feel para melhorar o design
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -269,7 +265,6 @@ public class EdicaoCadastroUsuario extends javax.swing.JFrame {
             e.printStackTrace();
         }
 
-        // Abrir a tela principal
         SwingUtilities.invokeLater(() -> new TelaUsuarios().setVisible(true));
     }
 

@@ -42,18 +42,14 @@ public class TelaCadastroEmprestimo extends javax.swing.JFrame {
     private void realizarPesquisa1() {
     try {
         DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
-
-        // Limpar a tabela
         tblModel.setRowCount(0);
 
-        // Configurar conexão com o banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur",
             "postgres",
             "jb12"
         );
 
-        // SQL de pesquisa com filtragem dinâmica por ID, nome ou cargo
         String sql = """
             SELECT idPessoa AS ID, nome, NULL AS Cargo FROM tb_usuario
             WHERE CAST(idPessoa AS TEXT) ILIKE ? OR nome ILIKE ? 
@@ -95,10 +91,8 @@ public class TelaCadastroEmprestimo extends javax.swing.JFrame {
     try {
     String pesquisa = jTextField4.getText().trim();
 
-    // Carregar o driver PostgreSQL
     Class.forName("org.postgresql.Driver");
 
-    // Conectar ao banco
     Connection con = DriverManager.getConnection(
         "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
         "postgres", 
@@ -391,23 +385,17 @@ public class TelaCadastroEmprestimo extends javax.swing.JFrame {
         // TODO add your handling code here:
 // Mostrar usuários e funcionários
 try {
-    // Criar o modelo da tabela
     DefaultTableModel tblModel = new DefaultTableModel();
     tblModel.addColumn("ID");
     tblModel.addColumn("Nome");
     tblModel.addColumn("Cargo");
 
-    // Associar o modelo à jTable1
     jTable1.setModel(tblModel);
-
-    // Conexão com o banco
     Connection con = DriverManager.getConnection(
         "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur",
         "postgres",
         "jb12"
     );
-
-    // Consulta SQL com UNION
     String sql = """
         SELECT idPessoa AS ID, nome, NULL AS Cargo FROM tb_usuario
         UNION
@@ -420,17 +408,14 @@ try {
     Statement stmt = con.createStatement();
     ResultSet rs = stmt.executeQuery(sql);
 
-    // Adicionar dados ao modelo
     while (rs.next()) {
         String id = String.valueOf(rs.getLong("ID"));
         String nome = rs.getString("nome");
         String cargo = rs.getString("Cargo");
 
-        // Adiciona a linha ao modelo da tabela
         tblModel.addRow(new String[]{id, nome, cargo != null ? cargo : ""});
     }
 
-    // Fechar recursos
     rs.close();
     stmt.close();
     con.close();
@@ -673,17 +658,13 @@ try {
     
     private void restaurarTabelaPessoas(DefaultTableModel tblModel, String pessoaAtual) {
     try {
-        // Obter o ID da pessoa que já foi selecionada
         String idRemovido = pessoaAtual.split(" - ")[0].trim();
-
-        // Conexão com o banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur",
             "postgres",
             "jb12"
         );
 
-        // Consulta SQL para recarregar a tabela, exceto o ID removido
         String sql = """
             SELECT idPessoa AS ID, nome, NULL AS Cargo FROM tb_usuario
             UNION
@@ -693,13 +674,11 @@ try {
         """;
 
         PreparedStatement ps = con.prepareStatement(sql);
-        ps.setString(1, idRemovido); // Ignorar a pessoa selecionada
+        ps.setString(1, idRemovido);
         ResultSet rs = ps.executeQuery();
 
-        // Limpar a tabela antes de restaurar
         tblModel.setRowCount(0);
 
-        // Adicionar dados ao modelo
         while (rs.next()) {
             String id = String.valueOf(rs.getLong("ID"));
             String nome = rs.getString("nome");

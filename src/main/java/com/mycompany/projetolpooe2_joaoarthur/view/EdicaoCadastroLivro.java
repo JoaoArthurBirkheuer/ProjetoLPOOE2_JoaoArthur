@@ -185,10 +185,8 @@ if (jTextField2.getText().trim().isEmpty()) {
 }
 
 try {
-    // Conexão com o banco
     EntityManager em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
 
-    // Buscar o livro no banco
     Livro livro = em.find(Livro.class, idLivro);
 
     if (livro == null) {
@@ -199,8 +197,6 @@ try {
 
     String novoTitulo = jTextField1.getText().trim();
     String novoAutor = jTextField2.getText().trim();
-
-    // Verificar se há outro livro com o mesmo título e autor
     TypedQuery<Long> query = em.createQuery(
         "SELECT COUNT(l) FROM Livro l WHERE l.titulo = :titulo AND l.autor = :autor AND l.idLivro <> :idLivro",
         Long.class
@@ -221,11 +217,10 @@ try {
         return;
     }
 
-    // Atualizando os dados do livro
     em.getTransaction().begin();
     livro.setTitulo(novoTitulo);
     livro.setAutor(novoAutor);
-    em.persist(livro); // Salva as mudanças
+    em.persist(livro);
     em.getTransaction().commit();
     em.close();
 
@@ -242,7 +237,6 @@ try {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // Configurar o look and feel para melhorar o design
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -254,7 +248,6 @@ try {
             e.printStackTrace();
         }
 
-        // Abrir a tela principal
         SwingUtilities.invokeLater(() -> new TelaLivros().setVisible(true));
     }
 

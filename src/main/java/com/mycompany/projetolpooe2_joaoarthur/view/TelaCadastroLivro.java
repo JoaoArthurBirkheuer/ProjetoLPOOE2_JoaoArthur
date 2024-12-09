@@ -116,11 +116,10 @@ if (titulo.isEmpty() || autor.isEmpty()) {
 
 EntityManager em = null;
 try {
-    // Criar EntityManager
+    
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
     em = emf.createEntityManager();
 
-    // Verificar se já existe um livro com o mesmo título e autor
     TypedQuery<Long> query = em.createQuery(
         "SELECT COUNT(l) FROM Livro l WHERE l.titulo = :titulo AND l.autor = :autor", Long.class
     );
@@ -134,7 +133,6 @@ try {
         return;
     }
 
-    // Persistir o novo livro
     em.getTransaction().begin();
 
     Livro livro = new Livro();
@@ -145,8 +143,6 @@ try {
     em.getTransaction().commit();
 
     JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
-
-    // Limpar os campos após o sucesso
     jTextField1.setText("");
     jTextField2.setText("");
 

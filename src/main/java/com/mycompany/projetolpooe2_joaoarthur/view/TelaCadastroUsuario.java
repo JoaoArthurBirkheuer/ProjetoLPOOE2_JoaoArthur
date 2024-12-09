@@ -137,7 +137,6 @@ public class TelaCadastroUsuario extends javax.swing.JFrame {
         return;
     }
 
-    // Verificar formato do CPF (xxx.xxx.xxx-xx)
     if (!cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}")) {
         JOptionPane.showMessageDialog(this, "O CPF deve estar no formato xxx.xxx.xxx-xx", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
         return;
@@ -145,11 +144,9 @@ public class TelaCadastroUsuario extends javax.swing.JFrame {
 
     EntityManager em = null;
     try {
-        // Criar EntityManager
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
         em = emf.createEntityManager();
 
-        // Verificar se o CPF já existe no banco
         TypedQuery<Long> query = em.createQuery("SELECT COUNT(u) FROM Usuario u WHERE u.cpf = :cpf", Long.class);
         query.setParameter("cpf", cpf);
         Long count = query.getSingleResult();
@@ -159,7 +156,6 @@ public class TelaCadastroUsuario extends javax.swing.JFrame {
             return;
         }
 
-        // Persistir o novo usuário
         em.getTransaction().begin();
 
         Usuario usuario = new Usuario();
@@ -172,7 +168,6 @@ public class TelaCadastroUsuario extends javax.swing.JFrame {
 
         JOptionPane.showMessageDialog(this, "Cadastro realizado com sucesso!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
-        // Limpar os campos após o sucesso
         jTextField1.setText("");
         jTextField2.setText("");
         jTextField3.setText("");

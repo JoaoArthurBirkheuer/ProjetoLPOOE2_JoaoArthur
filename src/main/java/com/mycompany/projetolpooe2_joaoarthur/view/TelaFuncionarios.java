@@ -182,26 +182,20 @@ public class TelaFuncionarios extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
        try {
-        // Carregar o driver PostgreSQL
         Class.forName("org.postgresql.Driver");
-
-        // Conectar ao banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
             "postgres", 
             "jb12"
         );
 
-        // Criar Statement
         Statement st = con.createStatement();
         String sql = "SELECT idPessoa, nome, cpf, email, cargo FROM tb_funcionario";
         ResultSet rs = st.executeQuery(sql);
 
-        // Obter o modelo da tabela
         DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
         tblModel.setRowCount(0);// tblModel.setRowCount(0); // Limpa os dados anteriores
 
-        // Popular a tabela
         while (rs.next()) {
             String id = String.valueOf(rs.getLong("idPessoa"));
             String nome = rs.getString("nome");
@@ -213,7 +207,6 @@ public class TelaFuncionarios extends javax.swing.JFrame {
             tblModel.addRow(tbData);
         }
 
-        // Fechar conexões
         rs.close();
         st.close();
         con.close();
@@ -244,14 +237,12 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         return;
     }
     
-    // Verificar se a coluna ID na linha selecionada está vazia
         String id = (String) jTable1.getValueAt(selectedRow, 0);
         if (id == null || id.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Não é possível excluir registros vazios. Certifique-se de que os dados foram carregados corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-    // Confirmar exclusão
     int confirm = JOptionPane.showConfirmDialog(
         this, 
         "Tem certeza que deseja excluir este registro?", 
@@ -263,20 +254,18 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         return; // Usuário cancelou
     }
 
-    // Obter ID do usuário a partir da tabela
+
     DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
     Long idF = Long.parseLong(tblModel.getValueAt(selectedRow, 0).toString());
 
-    // Apagar registro no banco via JPA
     try {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Buscar o usuário e remover
         Funcionario funcionario = em.find(Funcionario.class, idF);
         if (funcionario != null) {
-            // Remover avaliações relacionadas
+            
             List<Avaliacao> avaliacoes = em.createQuery(
                     "SELECT a FROM Avaliacao a WHERE a.funcionario.idPessoa = :idF", Avaliacao.class)
                     .setParameter("idUsuario", idF)
@@ -286,14 +275,12 @@ public class TelaFuncionarios extends javax.swing.JFrame {
                 em.remove(avaliacao);
             }
 
-            // Remover empréstimos relacionados
             List<Emprestimo> emprestimos = em.createQuery(
                     "SELECT e FROM Emprestimo e WHERE e.funcionario.idPessoa = :idF", Emprestimo.class)
                     .setParameter("idUsuario", idF)
                     .getResultList();
 
             for (Emprestimo emprestimo : emprestimos) {
-                // Limpar a relação com os livros emprestados
                 Set<Livro> livrosEmprestados = emprestimo.getLivrosEmprestados();
                 if (livrosEmprestados != null) {
                     livrosEmprestados.clear();
@@ -301,7 +288,6 @@ public class TelaFuncionarios extends javax.swing.JFrame {
                 em.remove(emprestimo);
             }
 
-            // Remover o usuário
             em.remove(funcionario);
 
             System.out.println("Usuário com ID " + idF + " e seus registros relacionados foram deletados.");
@@ -311,9 +297,8 @@ public class TelaFuncionarios extends javax.swing.JFrame {
         em.close();
         emf.close();
 
-        // Notificar exclusão e atualizar tabela
         JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
-        tblModel.removeRow(selectedRow); // Atualiza a tabela
+        tblModel.removeRow(selectedRow);
     } catch (Exception ex) {
         Logger.getLogger(TelaUsuarios.class.getName()).log(Level.SEVERE, null, ex);
         JOptionPane.showMessageDialog(this, "Erro ao excluir registro: " + ex.getMessage());
@@ -331,10 +316,8 @@ public class TelaFuncionarios extends javax.swing.JFrame {
     }
 
     try {
-        // Conversão segura para Long
         Long idPessoa = Long.parseLong(jTable1.getValueAt(linhaSelecionada, 0).toString());
 
-        // Passar o ID para a tela de edição
         EdicaoCadastroFuncionario telaEdicao = new EdicaoCadastroFuncionario(this, idPessoa);
         telaEdicao.setVisible(true);
     } catch (NumberFormatException ex) {
@@ -345,10 +328,8 @@ public class TelaFuncionarios extends javax.swing.JFrame {
     try {
         String pesquisa = jTextField1.getText().trim();
 
-        // Carregar o driver PostgreSQL
         Class.forName("org.postgresql.Driver");
 
-        // Conectar ao banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
             "postgres", 

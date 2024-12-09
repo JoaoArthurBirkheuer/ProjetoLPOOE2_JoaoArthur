@@ -226,10 +226,8 @@ public class EdicaoCadastroFuncionario extends javax.swing.JFrame {
     }
 
     try {
-        // Conexão com o banco
         EntityManager em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
 
-        // Buscar o usuário no banco
        Funcionario f = em.find(Funcionario.class, idPessoa);
 
         if (f == null) {
@@ -246,8 +244,6 @@ public class EdicaoCadastroFuncionario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "O CPF já está cadastrado!", "Erro de Validação", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        // Atualizando os dados do usuário
         em.getTransaction().begin();
         f.setNome(jTextField1.getText().trim());
         f.setCpf(jTextField2.getText().trim());
@@ -275,7 +271,6 @@ public class EdicaoCadastroFuncionario extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // Configurar o look and feel para melhorar o design
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

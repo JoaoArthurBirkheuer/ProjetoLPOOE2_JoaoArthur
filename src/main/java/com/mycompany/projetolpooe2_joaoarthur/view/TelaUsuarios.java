@@ -200,10 +200,8 @@ private void realizarPesquisa() {
     try {
         String pesquisa = jTextField1.getText().trim();
 
-        // Carregar o driver PostgreSQL
         Class.forName("org.postgresql.Driver");
 
-        // Conectar ao banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
             "postgres", 
@@ -239,26 +237,24 @@ private void realizarPesquisa() {
         // TODO add your handling code here:
         // mostrar dados
         try {
-        // Carregar o driver PostgreSQL
+    
         Class.forName("org.postgresql.Driver");
 
-        // Conectar ao banco
+       
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
             "postgres", 
             "jb12"
         );
 
-        // Criar Statement
         Statement st = con.createStatement();
         String sql = "SELECT idPessoa, nome, cpf, email FROM tb_usuario";
         ResultSet rs = st.executeQuery(sql);
 
-        // Obter o modelo da tabela
+ 
         DefaultTableModel tblModel = (DefaultTableModel) jTable2.getModel();
         tblModel.setRowCount(0);// tblModel.setRowCount(0); // Limpa os dados anteriores
 
-        // Popular a tabela
         while (rs.next()) {
             String id = String.valueOf(rs.getLong("idPessoa"));
             String nome = rs.getString("nome");
@@ -271,7 +267,6 @@ private void realizarPesquisa() {
             tblModel.addRow(tbData);
         }
 
-        // Fechar conexões
         rs.close();
         st.close();
         con.close();
@@ -302,10 +297,8 @@ private void realizarPesquisa() {
     }
 
     try {
-        // Conversão segura para Long
         Long idPessoa = Long.parseLong(jTable2.getValueAt(linhaSelecionada, 0).toString());
 
-        // Passar o ID para a tela de edição
         EdicaoCadastroUsuario telaEdicao = new EdicaoCadastroUsuario(this, idPessoa);
         telaEdicao.setVisible(true);
     } catch (NumberFormatException ex) {
@@ -316,21 +309,19 @@ private void realizarPesquisa() {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         // deletar
-        // Verificar se uma linha está selecionada
     int selectedRow = jTable2.getSelectedRow();
     if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Selecione uma linha para excluir!");
         return;
     }
     
-    // Verificar se a coluna ID na linha selecionada está vazia
         String id = (String) jTable2.getValueAt(selectedRow, 0);
         if (id == null || id.trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Não é possível excluir registros vazios. Certifique-se de que os dados foram carregados corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-    // Confirmar exclusão
+
     int confirm = JOptionPane.showConfirmDialog(
         this, 
         "Tem certeza que deseja excluir este registro?", 
@@ -342,20 +333,15 @@ private void realizarPesquisa() {
         return; // Usuário cancelou
     }
 
-    // Obter ID do usuário a partir da tabela
     DefaultTableModel tblModel = (DefaultTableModel) jTable2.getModel();
     Long idUsuario = Long.parseLong(tblModel.getValueAt(selectedRow, 0).toString());
 
-    // Apagar registro no banco via JPA
     try {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-
-        // Buscar o usuário e remover
         Usuario usuario = em.find(Usuario.class, idUsuario);
         if (usuario != null) {
-            // Remover avaliações relacionadas
             List<Avaliacao> avaliacoes = em.createQuery(
                     "SELECT a FROM Avaliacao a WHERE a.usuario.idPessoa = :idUsuario", Avaliacao.class)
                     .setParameter("idUsuario", idUsuario)
@@ -365,14 +351,12 @@ private void realizarPesquisa() {
                 em.remove(avaliacao);
             }
 
-            // Remover empréstimos relacionados
             List<Emprestimo> emprestimos = em.createQuery(
                     "SELECT e FROM Emprestimo e WHERE e.usuario.idPessoa = :idUsuario", Emprestimo.class)
                     .setParameter("idUsuario", idUsuario)
                     .getResultList();
 
             for (Emprestimo emprestimo : emprestimos) {
-                // Limpar a relação com os livros emprestados
                 Set<Livro> livrosEmprestados = emprestimo.getLivrosEmprestados();
                 if (livrosEmprestados != null) {
                     livrosEmprestados.clear();
@@ -380,7 +364,6 @@ private void realizarPesquisa() {
                 em.remove(emprestimo);
             }
 
-            // Remover o usuário
             em.remove(usuario);
 
             System.out.println("Usuário com ID " + idUsuario + " e seus registros relacionados foram deletados.");
@@ -390,7 +373,6 @@ private void realizarPesquisa() {
         em.close();
         emf.close();
 
-        // Notificar exclusão e atualizar tabela
         JOptionPane.showMessageDialog(this, "Registro excluído com sucesso!");
         tblModel.removeRow(selectedRow); // Atualiza a tabela
     } catch (Exception ex) {

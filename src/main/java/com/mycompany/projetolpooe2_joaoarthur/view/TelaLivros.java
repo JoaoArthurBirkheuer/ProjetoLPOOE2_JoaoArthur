@@ -227,23 +227,19 @@ public class TelaLivros extends javax.swing.JFrame {
         try{
         Class.forName("org.postgresql.Driver");
 
-        // Conectar ao banco
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
             "postgres", 
             "jb12"
         );
 
-        // Criar Statement
         Statement st = con.createStatement();
         String sql = "SELECT idlivro, titulo, autor FROM tb_livro";
         ResultSet rs = st.executeQuery(sql);
 
-        // Obter o modelo da tabela
         DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
         tblModel.setRowCount(0);// tblModel.setRowCount(0); // Limpa os dados anteriores
 
-        // Popular a tabela
         while (rs.next()) {
             String id = String.valueOf(rs.getInt("idlivro"));
             String titulo = rs.getString("titulo");
@@ -253,7 +249,6 @@ public class TelaLivros extends javax.swing.JFrame {
             tblModel.addRow(tbData);
         }
 
-        // Fechar conexões
         rs.close();
         st.close();
         con.close();
@@ -288,7 +283,6 @@ public class TelaLivros extends javax.swing.JFrame {
         
         Integer idLivro = Integer.valueOf(jTable1.getValueAt(linhaSelecionada, 0).toString().trim());
 
-        // Passar o ID para a tela de edição
         EdicaoCadastroLivro telaEdicao = new EdicaoCadastroLivro(this, idLivro); // Passa o ID correto
         telaEdicao.setVisible(true);
     } catch (NumberFormatException ex) {
@@ -298,21 +292,18 @@ public class TelaLivros extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
 
-    // Verificar se uma linha foi selecionada
     int selectedRow = jTable1.getSelectedRow();
     if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Selecione um livro para excluir!");
         return;
     }
 
-    // Verificar se a coluna ID na linha selecionada está vazia
     String id = (String) jTable1.getValueAt(selectedRow, 0);
     if (id == null || id.trim().isEmpty()) {
         JOptionPane.showMessageDialog(this, "Não é possível excluir registros vazios. Certifique-se de que os dados foram carregados corretamente.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
     }
 
-    // Confirmar exclusão
     int confirm = JOptionPane.showConfirmDialog(
             this,
             "Tem certeza que deseja excluir este livro e seus vínculos com empréstimos?",
@@ -324,20 +315,16 @@ public class TelaLivros extends javax.swing.JFrame {
         return; // Usuário cancelou
     }
 
-    // Obter ID do livro a partir da tabela
     DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
     int idLivro = Integer.parseInt(tblModel.getValueAt(selectedRow, 0).toString());
 
-    // Apagar registro no banco via JPA
     try {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
 
-        // Buscar o livro e remover
         Livro livro = em.find(Livro.class, idLivro);
         if (livro != null) {
-            // Remover avaliações relacionadas ao livro
             List<Avaliacao> avaliacoes = em.createQuery(
                     "SELECT a FROM Avaliacao a WHERE a.livro.id = :idLivro", Avaliacao.class)
                     .setParameter("idLivro", idLivro)
@@ -347,19 +334,16 @@ public class TelaLivros extends javax.swing.JFrame {
                 em.remove(avaliacao);
             }
 
-            // Remover o livro da associação com empréstimos na tabela `tb_emprestimo_livro`
             List<Emprestimo> emprestimos = em.createQuery(
                     "SELECT e FROM Emprestimo e JOIN e.livrosEmprestados l WHERE l.id = :idLivro", Emprestimo.class)
                     .setParameter("idLivro", idLivro)
                     .getResultList();
 
             for (Emprestimo emprestimo : emprestimos) {
-                // Remover o livro específico da associação
                 emprestimo.getLivrosEmprestados().remove(livro);
-                em.persist(emprestimo); // Atualizar o estado do empréstimo
+                em.persist(emprestimo);
             }
 
-            // Remover o próprio livro
             em.remove(livro);
 
             System.out.println("Livro com ID " + idLivro + " e seus vínculos relacionados foram deletados.");
@@ -369,9 +353,8 @@ public class TelaLivros extends javax.swing.JFrame {
         em.close();
         emf.close();
 
-        // Notificar exclusão e atualizar tabela
         JOptionPane.showMessageDialog(this, "Livro excluído com sucesso!");
-        tblModel.removeRow(selectedRow); // Atualiza a tabela
+        tblModel.removeRow(selectedRow); 
     } catch (Exception ex) {
         Logger.getLogger(TelaLivros.class.getName()).log(Level.SEVERE, null, ex);
         JOptionPane.showMessageDialog(this, "Erro ao excluir livro: " + ex.getMessage());

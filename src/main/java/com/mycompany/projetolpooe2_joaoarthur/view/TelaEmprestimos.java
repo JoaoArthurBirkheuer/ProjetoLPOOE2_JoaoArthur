@@ -39,9 +39,8 @@ public class TelaEmprestimos extends javax.swing.JFrame {
     }
     
     private void realizarPesquisa() {
-    String pesquisa = jTextField1.getText().trim(); // Campo de entrada para a pesquisa
+    String pesquisa = jTextField1.getText().trim();
 
-    // Validar entrada: permitir nulo ou apenas números
     if (!pesquisa.isEmpty() && !pesquisa.matches("\\d+")) {
         JOptionPane.showMessageDialog(this, "Insira um ID numérico válido.", "Erro", JOptionPane.ERROR_MESSAGE);
         return;
@@ -54,7 +53,6 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             "jb12"
         );
 
-        // Consultas SQL
         String sqlEmprestimos = """
             SELECT e.id AS idEmprestimo, 
                    TO_CHAR(e.dataemprestimo, 'DD/MM/YYYY') AS dataEmprestimo, 
@@ -72,7 +70,6 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             GROUP BY el.emprestimo_id
             """;
 
-        // Preparar e executar a consulta de empréstimos
         PreparedStatement pstmtEmprestimos = con.prepareStatement(sqlEmprestimos);
         if (pesquisa.isEmpty()) {
             pstmtEmprestimos.setNull(1, java.sql.Types.BIGINT);
@@ -88,11 +85,10 @@ public class TelaEmprestimos extends javax.swing.JFrame {
         }
         ResultSet rsEmprestimos = pstmtEmprestimos.executeQuery();
 
-        // Executar a consulta de livros
         Statement stmtLivros = con.createStatement();
         ResultSet rsLivros = stmtLivros.executeQuery(sqlLivros);
 
-        // Armazenar os livros associados a cada empréstimo
+        
         Map<Long, String> mapaLivros = new HashMap<>();
         while (rsLivros.next()) {
             long idEmprestimo = rsLivros.getLong("idEmprestimo");
@@ -100,11 +96,9 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             mapaLivros.put(idEmprestimo, livros);
         }
 
-        // Obter o modelo da tabela e limpar dados anteriores
         DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
         tblModel.setRowCount(0);
 
-        // Preencher os dados na tabela
         while (rsEmprestimos.next()) {
             long idEmprestimo = rsEmprestimos.getLong("idEmprestimo");
             String dataEmprestimo = rsEmprestimos.getString("dataEmprestimo");
@@ -114,11 +108,9 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             String pessoaInfo = idPessoa + " (" + tipoPessoa + ")";
             String livros = mapaLivros.getOrDefault(idEmprestimo, ""); // IDs dos livros
 
-            // Adicionar os dados no modelo
             tblModel.addRow(new Object[]{idEmprestimo, dataEmprestimo, dataDevolucao, pessoaInfo, livros});
         }
 
-        // Fechar conexões
         rsEmprestimos.close();
         rsLivros.close();
         pstmtEmprestimos.close();
@@ -151,11 +143,12 @@ public class TelaEmprestimos extends javax.swing.JFrame {
         jButton5 = new javax.swing.JButton();
         jTextField1 = new javax.swing.JTextField();
         jTextField1 = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel1.setText("Control e Pesquisa de Empréstimos");
+        jLabel1.setText("Controle e Pesquisa de Empréstimos");
         jLabel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 3));
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
@@ -222,21 +215,17 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Editar Emprestimo");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(60, 60, 60)
-                .addComponent(jButton5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton2)
-                .addGap(100, 100, 100)
-                .addComponent(jButton4)
-                .addGap(80, 80, 80))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jScrollPane1))
             .addGroup(layout.createSequentialGroup()
                 .addGap(171, 171, 171)
                 .addComponent(jLabel1)
@@ -247,6 +236,20 @@ public class TelaEmprestimos extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(55, 55, 55))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addComponent(jButton5)
+                .addGap(59, 59, 59)
+                .addComponent(jButton2)
+                .addGap(88, 88, 88)
+                .addComponent(jButton1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton4)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,7 +266,8 @@ public class TelaEmprestimos extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton4)
-                    .addComponent(jButton5))
+                    .addComponent(jButton5)
+                    .addComponent(jButton1))
                 .addContainerGap(17, Short.MAX_VALUE))
         );
 
@@ -272,11 +276,11 @@ public class TelaEmprestimos extends javax.swing.JFrame {
     
     private void mostrarDadosEmprestimos() {
     try {
-        // Conexão com o banco
+        
         Connection con = DriverManager.getConnection(
             "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", "postgres", "jb12");
 
-        // Consulta para a tabela tb_emprestimo
+        
         String sqlEmprestimos = """
             SELECT e.id AS idEmprestimo, 
                    TO_CHAR(e.dataemprestimo, 'DD/MM/YYYY') AS dataEmprestimo, 
@@ -286,7 +290,7 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             FROM tb_emprestimo e
             """;
 
-        // Consulta para a tabela tb_emprestimo_livro
+        
         String sqlLivros = """
             SELECT el.emprestimo_id AS idEmprestimo, 
                    STRING_AGG(el.livro_id::TEXT, ', ') AS livros
@@ -294,11 +298,9 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             GROUP BY el.emprestimo_id
             """;
 
-        // Executar a consulta de empréstimos
         Statement stmtEmprestimos = con.createStatement();
         ResultSet rsEmprestimos = stmtEmprestimos.executeQuery(sqlEmprestimos);
 
-        // Executar a consulta de livros e armazenar em um mapa
         Statement stmtLivros = con.createStatement();
         ResultSet rsLivros = stmtLivros.executeQuery(sqlLivros);
 
@@ -309,11 +311,9 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             mapaLivros.put(idEmprestimo, livros);
         }
 
-        // Obter o modelo da tabela e limpar dados anteriores
         DefaultTableModel tblModel = (DefaultTableModel) jTable1.getModel();
         tblModel.setRowCount(0);
 
-        // Processar os resultados dos empréstimos
         while (rsEmprestimos.next()) {
             long idEmprestimo = rsEmprestimos.getLong("idEmprestimo");
             String dataEmprestimo = rsEmprestimos.getString("dataEmprestimo");
@@ -322,14 +322,11 @@ public class TelaEmprestimos extends javax.swing.JFrame {
             String tipoPessoa = rsEmprestimos.getString("tipoPessoa");
             String pessoaInfo = idPessoa + " (" + tipoPessoa + ")";
 
-            // Obter os livros relacionados ao empréstimo
             String livros = mapaLivros.getOrDefault(idEmprestimo, "");
 
-            // Adicionar os dados na tabela
             tblModel.addRow(new Object[]{idEmprestimo, dataEmprestimo, dataDevolucao, pessoaInfo, livros});
         }
 
-        // Fechar conexões
         rsEmprestimos.close();
         rsLivros.close();
         stmtEmprestimos.close();
@@ -370,7 +367,6 @@ try {
         return; // Se o usuário cancelar, não prossegue com a exclusão
     }
 
-    // Configurar EntityManager
     EntityManagerFactory emf = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur");
     EntityManager em = emf.createEntityManager();
 
@@ -410,6 +406,26 @@ try {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton5ActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        // editar
+        int linhaSelecionada = jTable1.getSelectedRow();
+
+    if (linhaSelecionada == -1) {
+    JOptionPane.showMessageDialog(this, "Por favor, selecione um empréstimo na tabela.");
+    return;
+    }
+
+    try {
+        int idEmprestimo = Integer.parseInt(jTable1.getValueAt(linhaSelecionada, 0).toString());
+
+        EdicaoCadastroEmprestimo telaEdicao = new EdicaoCadastroEmprestimo(this, idEmprestimo);
+        telaEdicao.setVisible(true);
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "Erro ao processar o ID do usuário.");
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -446,6 +462,7 @@ try {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
