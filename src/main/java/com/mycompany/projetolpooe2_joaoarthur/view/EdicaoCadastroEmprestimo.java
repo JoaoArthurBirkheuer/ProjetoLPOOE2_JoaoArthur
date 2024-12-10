@@ -749,40 +749,72 @@ try {
     }
 }
     
-    private void realizarPesquisa2(){
+    private void realizarPesquisa2() {
+    EntityManager em = null;
+
     try {
-    String pesquisa = jTextField4.getText().trim();
+        em = Persistence.createEntityManagerFactory("ProjetoLPOOE2_JoaoArthur").createEntityManager();
 
-    Class.forName("org.postgresql.Driver");
+        // Obter o texto de pesquisa e o ID do empréstimo
+        String pesquisa = jTextField4.getText().trim();
+        String idEmprestimoText = jTextField5.getText().trim();
 
-    Connection con = DriverManager.getConnection(
-        "jdbc:postgresql://localhost:5432/ProjetoLPOOE2_JoaoArthur", 
-        "postgres", 
-        "jb12"
-    );
+        if (idEmprestimoText.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Informe o ID do empréstimo no campo correspondente.");
+            return;
+        }
 
-    Statement st = con.createStatement();
-    String sql = "SELECT idLivro, titulo FROM tb_livro WHERE idLivro::text ILIKE '%" + pesquisa + "%' OR titulo ILIKE '%" + pesquisa + "%'";
-    ResultSet rs = st.executeQuery(sql);
+        Long idEmprestimo = Long.parseLong(idEmprestimoText);
 
-    DefaultTableModel tblModel = (DefaultTableModel) jTable2.getModel();
-    tblModel.setRowCount(0);
+        // SQL para buscar livros e verificar se estão no empréstimo específico
+        String sql = """
+            SELECT l.idlivro AS livroId,
+                   l.titulo AS titulo,
+                   CASE 
+                       WHEN EXISTS (
+                           SELECT 1 
+                           FROM tb_emprestimo_livro el
+                           WHERE el.livro_id = l.idlivro AND el.emprestimo_id = :idEmprestimo
+                       ) THEN TRUE
+                       ELSE FALSE
+                   END AS presenteNoEmprestimo
+            FROM tb_livro l
+            WHERE CAST(l.idlivro AS TEXT) ILIKE :pesquisa
+               OR l.titulo ILIKE :pesquisa
+        """;
 
-    while (rs.next()) {
-        String id = String.valueOf(rs.getLong("idLivro"));
-        String titulo = rs.getString("titulo");
+        // Criar consulta
+        Query query = em.createNativeQuery(sql);
+        query.setParameter("idEmprestimo", idEmprestimo);
+        query.setParameter("pesquisa", "%" + pesquisa + "%");
 
-        String tbData[] = {id, titulo};
-        tblModel.addRow(tbData);
+        // Executar a consulta
+        List<Object[]> resultados = query.getResultList();
+
+        // Obter o modelo da tabela e limpar os dados existentes
+        DefaultTableModel tblModel = (DefaultTableModel) jTable2.getModel();
+        tblModel.setRowCount(0);
+
+        // Processar os resultados e adicionar à tabela
+        for (Object[] resultado : resultados) {
+            Long livroId = ((Number) resultado[0]).longValue(); // ID do livro
+            String titulo = (String) resultado[1]; // Título do livro
+            Boolean presenteNoEmprestimo = (Boolean) resultado[2]; // Presente no empréstimo
+
+            // Adicionar linha na tabela
+            tblModel.addRow(new Object[]{livroId, titulo, presenteNoEmprestimo});
+        }
+
+    } catch (NumberFormatException ex) {
+        JOptionPane.showMessageDialog(this, "O ID do empréstimo deve ser um número válido.");
+    } catch (Exception ex) {
+        JOptionPane.showMessageDialog(this, "Erro ao carregar livros: " + ex.getMessage());
+        ex.printStackTrace();
+    } finally {
+        if (em != null) em.close();
     }
-
-    rs.close();
-    st.close();
-    con.close();
-} catch (ClassNotFoundException | SQLException ex) {
-    JOptionPane.showMessageDialog(this, "Erro na pesquisa: " + ex.getMessage());
 }
-    }
+
     
     /**
      * @param args the command line arguments
