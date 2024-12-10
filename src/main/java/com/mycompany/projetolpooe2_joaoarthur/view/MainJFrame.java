@@ -175,6 +175,9 @@ public class MainJFrame extends javax.swing.JFrame {
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         // TODO add your handling code here:
         // avaliações
+        TelaAvaliacao ta = new TelaAvaliacao();
+        ta.setVisible(true);
+        ta.setLocationRelativeTo(this);
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     /**
