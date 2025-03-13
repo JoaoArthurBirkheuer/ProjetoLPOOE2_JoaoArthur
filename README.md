@@ -1,6 +1,6 @@
 # Projeto Biblioteca - LPOO
 
-Este projeto é um sistema de gerenciamento de biblioteca desenvolvido para a disciplina de **Linguagem de Programação Orientada a Objetos (LPOO)**, sendo uma extensão do repositório ProjetoLPOOE1_JoaoArthur. Ele permite o cadastro e a administração de usuários, funcionários, livros e empréstimos utilizando **Java**, **JPA** (Java Persistence API) e o banco de dados **PostgreSQL**, bem como a manipulação desses dados através de uma interface gráfica por meio de JFrames e JDBC. Este sistema não só demonstra o uso de herança, associações e persistência de dados em um contexto de gerenciamento de biblioteca como também simula sua interface visual e permite manipulação facilitada dos dados através dela. 
+Este projeto é um sistema de gerenciamento de biblioteca desenvolvido para a disciplina de **Linguagem de Programação Orientada a Objetos (LPOO)**. Ele permite o cadastro e a administração de usuários, funcionários, livros e empréstimos utilizando **Java**, **JPA** (Java Persistence API) e o banco de dados **PostgreSQL**, bem como a manipulação desses dados através de uma interface gráfica por meio de JFrames e JDBC. Este sistema não só demonstra o uso de herança, associações e persistência de dados em um contexto de gerenciamento de biblioteca como também simula sua interface visual e permite manipulação facilitada dos dados através dela. 
 
 ## Estrutura do Projeto
 
